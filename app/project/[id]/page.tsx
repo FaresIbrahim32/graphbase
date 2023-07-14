@@ -43,8 +43,8 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                                 {projectDetails?.createdBy?.name}
                             </Link>
                             <Image src="/dot.svg" width={4} height={4} alt="dot" />
-                            <Link href={`/?y=${projectDetails.y}`} className="text-primary-purple font-semibold"> 
-                                {projectDetails?.y}
+                            <Link href={`/?category=${projectDetails.category}`} className="text-primary-purple font-semibold"> 
+                                {projectDetails?.category}
                             </Link>
                         </div>
                     </div>

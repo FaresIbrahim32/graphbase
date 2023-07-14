@@ -25,20 +25,23 @@ type ProjectSearch = {
   },
 }
 
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
-export const revalidate = 0;
+const Home = ({ searchParams: { category, endcursor } }: Props) => {
+  const fetchData = async () => {
+    try {
+      const data = await fetchAllProjects(category, endcursor) as ProjectSearch;
+      return data?.projectSearch;
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      return null;
+    }
+  };
 
-const Home = async ({ searchParams: { category, endcursor } }: Props) => {
-  const data = await fetchAllProjects(category, endcursor) as ProjectSearch
-
-  const projectsToDisplay = data?.projectSearch?.edges || [];
+  const projectsToDisplay = fetchData()?.edges || [];
 
   if (projectsToDisplay.length === 0) {
     return (
       <section className="flexStart flex-col paddings">
         <Categories />
-
         <p className="no-result-text text-center">No projects found, go create some first.</p>
       </section>
     )
@@ -47,11 +50,10 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
   return (
     <section className="flexStart flex-col paddings mb-16">
       <Categories />
-
       <section className="projects-grid">
         {projectsToDisplay.map(({ node }: { node: ProjectInterface }) => (
           <ProjectCard
-            key={`${node?.id}`}
+            key={node?.id}
             id={node?.id}
             image={node?.image}
             title={node?.title}
@@ -61,12 +63,11 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
           />
         ))}
       </section>
-
       <LoadMore 
-        startCursor={data?.projectSearch?.pageInfo?.startCursor} 
-        endCursor={data?.projectSearch?.pageInfo?.endCursor} 
-        hasPreviousPage={data?.projectSearch?.pageInfo?.hasPreviousPage} 
-        hasNextPage={data?.projectSearch?.pageInfo.hasNextPage}
+        startCursor={fetchData()?.pageInfo?.startCursor} 
+        endCursor={fetchData()?.pageInfo?.endCursor} 
+        hasPreviousPage={fetchData()?.pageInfo?.hasPreviousPage} 
+        hasNextPage={fetchData()?.pageInfo?.hasNextPage}
       />
     </section>
   )
